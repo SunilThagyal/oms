@@ -6,6 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management System</title>
 
+    <!-- Inline loader styles to ensure they load first -->
+    <style>
+        /* Immediate loader display */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease-out;
+        }
+
+        /* From Uiverse.io by Rajan1092 */
+        .spinner {
+            width: 56px;
+            height: 56px;
+            display: grid;
+        }
+
+        .spinner::before,
+        .spinner::after {
+            content: "";
+            grid-area: 1/1;
+            background: var(--c) 50% 0,
+                var(--c) 50% 100%,
+                var(--c) 100% 50%,
+                var(--c) 0 50%;
+            background-size: 13.4px 13.4px;
+            background-repeat: no-repeat;
+            animation: spinner-3hs4a3 1s infinite;
+        }
+
+        .spinner::before {
+            --c: radial-gradient(farthest-side, #4F46E5 92%, #0000);
+            margin: 4.5px;
+            background-size: 9px 9px;
+            animation-timing-function: linear;
+        }
+
+        .spinner::after {
+            --c: radial-gradient(farthest-side, #4F46E5 92%, #0000);
+        }
+
+        @keyframes spinner-3hs4a3 {
+            100% {
+                transform: rotate(.5turn);
+            }
+        }
+
+        /* Hide all content until fully loaded */
+        .content-wrapper {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        .content-wrapper.loaded {
+            opacity: 1;
+        }
+    </style>
+
     <!-- Preconnect for Faster External Resource Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,9 +121,6 @@
             content: "\f3c2";
         }
 
-        body { visibility: hidden; }
-        body.loaded { visibility: visible; }
-
         .chart-container {
             width: 100%;
             height: 300px;
@@ -73,19 +136,6 @@
             display: block;
         }
 
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
         @media (max-width: 1024px) {
             #sidebar {
                 position: fixed;
@@ -97,26 +147,52 @@
         }
     </style>
 
+    <!-- Script to show loader immediately, before DOM is fully parsed -->
+    <script>
+        // Create and show loader immediately
+        document.write('<div id="page-loader"><div class="spinner"></div><p class="mt-4 text-gray-600 font-medium">Loading...</p></div>');
+    </script>
+
     @stack('styles')
 </head>
 
-<body class="bg-gray-50" onload="document.body.classList.add('loaded'); document.getElementById('loader-overlay').style.display = 'none';">
-    <div id="loader-overlay" class="loader-overlay">
-        <p>Page is under loading...</p>
-    </div>
+<body class="bg-gray-50">
+    <!-- Content wrapper -->
+    <div class="content-wrapper">
+        <div class="flex h-screen">
+            @include('oms.layout.sidebar')
 
-    <div class="flex h-screen">
-        @include('oms.layout.sidebar')
+            <div class="flex-1 flex flex-col overflow-hidden">
+                @include('oms.layout.header')
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-            @include('oms.layout.header')
-
-            @yield('content')
+                @yield('content')
+            </div>
         </div>
     </div>
 
     <!-- Interactive JavaScript -->
     <script>
+        // Wait for all resources to load
+// Wait for all resources to load
+window.addEventListener('load', () => {
+    const loader = document.getElementById('page-loader');
+    const contentWrapper = document.querySelector('.content-wrapper');
+
+    // Show content
+    contentWrapper.classList.add('loaded');
+
+    // Set a delay before starting to hide the loader
+    setTimeout(() => {
+        // Start fade out
+        loader.style.opacity = '0';
+
+        // Remove from DOM after transition completes
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 300); // This matches your transition time
+    }, 500); // Set this to how long you want the loader to show (5 seconds in this example)
+});
+
         document.addEventListener('DOMContentLoaded', () => {
             const userMenuBtn = document.getElementById('userMenuBtn');
             const userMenu = document.getElementById('userMenu');
