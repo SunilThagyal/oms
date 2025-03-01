@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management System</title>
+    <meta http-equiv="x-rocket-loader" content="disable">
+
 
     <!-- Inline loader styles to ensure they load first -->
     <style>
@@ -86,7 +88,11 @@
     <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
-    <script>
+    <!-- Load Tailwind first -->
+    <script src="https://cdn.tailwindcss.com" data-cfasync="false"></script>
+
+    <!-- Now configure Tailwind -->
+    <script data-cfasync="false">
         tailwind.config = {
             theme: {
                 extend: {
@@ -108,9 +114,8 @@
                     }
                 }
             }
-        }
+        };
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- ECharts Library (Deferred for Better Performance) -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>

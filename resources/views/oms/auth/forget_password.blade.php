@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" data-cfasync="false"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
-    <script>
+    <script data-cfasync="false">
         tailwind.config = {
             theme: {
                 extend: {
@@ -51,7 +51,7 @@
 <body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div class="text-center mb-8">
-            <h1 class="font-['Pacifico'] text-3xl mb-2 text-primary">logo</h1>
+            <h1 class="font-['Pacifico'] text-3xl mb-2 text-primary">{{config("app.name")}}</h1>
             <h2 class="text-2xl font-semibold text-gray-800 mb-2">Forgot Password</h2>
             <p class="text-gray-600">Enter your email address to reset your password</p>
         </div>
@@ -80,7 +80,7 @@
         </form>
 
         <div class="mt-4 text-center">
-            <a href="#" class="text-sm text-primary hover:text-primary/80 transition-colors">Back to Login</a>
+            <a href="{{route("auth.login")}}" class="text-sm text-primary hover:text-primary/80 transition-colors">Back to Login</a>
         </div>
     </div>
 

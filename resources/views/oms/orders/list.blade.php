@@ -58,8 +58,7 @@
                                 </button>
                             </div>
                             <div class="relative">
-                                <button id="addOrderBtn" class="w-full bg-primary text-white px-4 py-2 rounded !rounded-button flex items-center gap-2 hover:bg-primary/90 justify-center">
-                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
+                                <button id="addOrderBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-500 justify-center z-50">                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
                                     <span class="whitespace-nowrap">Add Order</span>
                                 </button>
                             </div>
