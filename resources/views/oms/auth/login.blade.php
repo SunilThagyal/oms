@@ -68,6 +68,7 @@
             <h1 class="font-['Pacifico'] text-4xl text-primary mb-2">{{config("app.name")}}</h1>
             <p class="text-gray-600">Welcome back! Please login to your account.</p>
          </div>
+         <x-alert/>
          <form id="loginForm" action="{{route("auth.login")}}" method="post" class="space-y-6">
             @csrf
             <div class="opacity-0 fade-in fade-in-delay-1">

@@ -5,7 +5,7 @@ use App\Http\Controllers\Oms\Auth\{AuthController};
 use Illuminate\Support\Facades\Route;
 
 // auth
-Route::name('auth.')->controller(AuthController::class)->group(function () {
+Route::name('auth.')->middleware("guest")->controller(AuthController::class)->group(function () {
 Route::any('/login', 'login')->name('login');
 Route::any('/forget-password', 'forgetPassword')->name('foget_password');
 });
@@ -13,6 +13,8 @@ Route::any('/forget-password', 'forgetPassword')->name('foget_password');
 
 
 Route::get('/', [OmsController::class, 'index'])->name('oms.dashboard')->middleware('auth'); // Example route
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Example route
+
 Route::prefix('oms')->name('oms.')->middleware('auth')->controller(OmsController::class)->group(function () {
     Route::get('/', 'index')->name('index'); // Example route
     Route::get('/create', 'create')->name('create'); // Example route
