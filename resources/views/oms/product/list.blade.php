@@ -312,19 +312,28 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed !rounded-button">
-                            <div class="space-y-1 text-center">
-                                <i class="ri-image-add-line mx-auto h-12 w-12 text-gray-400"></i>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="file-upload" class="relative cursor-pointer bg-white !rounded-button font-medium text-primary hover:text-primary focus-within:outline-none">
-                                        <span>Upload images</span>
-                                        <input id="file-upload" name="images" type="file" class="sr-only" multiple accept="image/*">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
+                        {{--  --}}
+                        <div class="max-w-lg mx-auto">
+                            <div id="upload-container"
+                                class="mt-1 flex flex-col justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                                <div id="upload-area" class="space-y-1 text-center cursor-pointer">
+                                    <i class="fas fa-image mx-auto h-12 w-12 text-gray-400"></i>
+                                    <div class="flex text-sm text-gray-600 justify-center">
+                                        <label for="file-upload"
+                                            class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary focus-within:outline-none">
+                                            <span>Upload images</span>
+                                            <input id="file-upload" name="images" type="file" class="sr-only"  accept="image/*">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                 </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                <div id="image-preview" class="mt-4 grid grid-cols-2 gap-4"></div>
+                                <p id="error-message" class="text-red-500 text-center mt-4 hidden">You can't upload more than 4 images at
+                                    once.</p>
                             </div>
                         </div>
+                        {{--  --}}
                     </div>
                     <div>
                         <label class="flex items-center gap-2">
@@ -378,5 +387,68 @@
 </main>
 @endsection
 @push('scripts')
+<script>
+    function initImageUploader(uploadAreaSelector, fileInputSelector, previewContainerSelector, errorMessageSelector, maxFiles = 4) {
+    let uploadedFiles = [];
+
+    const uploadArea = document.querySelector(uploadAreaSelector);
+    const fileInput = document.querySelector(fileInputSelector);
+    const previewContainer = document.querySelector(previewContainerSelector);
+    const errorMessage = document.querySelector(errorMessageSelector);
+
+    // Trigger file input on clicking the upload area
+    uploadArea.addEventListener('click', function () {
+        fileInput.click();
+    });
+
+    // Handle file selection and preview
+    fileInput.addEventListener('change', function (event) {
+        const files = event.target.files;
+
+        if (uploadedFiles.length + files.length > maxFiles) {
+            errorMessage.classList.remove('hidden');
+            return;
+        } else {
+            errorMessage.classList.add('hidden');
+        }
+
+        Array.from(files).forEach(file => {
+            uploadedFiles.push(file);
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const div = document.createElement('div');
+                div.classList.add('relative', 'border', 'border-gray-300', 'rounded-md', 'overflow-hidden');
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Preview of uploaded image';
+                img.classList.add('w-full', 'h-32', 'object-cover');
+
+                const removeButton = document.createElement('button');
+                removeButton.innerHTML = '<i class="fas fa-times"></i>';
+                removeButton.classList.add('absolute', 'top-2', 'right-2', 'bg-red-500', 'text-white', 'rounded-full', 'p-1', 'hover:bg-red-700');
+                removeButton.addEventListener('click', () => {
+                    const index = uploadedFiles.indexOf(file);
+                    if (index > -1) {
+                        uploadedFiles.splice(index, 1);
+                    }
+                    div.remove();
+                });
+
+                div.appendChild(img);
+                div.appendChild(removeButton);
+                previewContainer.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Clear the input so the same file can be selected again if needed
+        event.target.value = '';
+    });
+}
+initImageUploader('.space-y-1.text-center', '#file-upload', '#image-preview', '#error-message');
+    </script>
 <script src="{{ asset('assets/js/product.js') }}"></script>
 @endpush
