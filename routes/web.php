@@ -12,8 +12,8 @@ Route::any('/forget-password', 'forgetPassword')->name('foget_password');
 
 
 
-Route::get('/', [OmsController::class, 'index'])->name('oms.dashboard'); // Example route
-Route::prefix('oms')->name('oms.')->controller(OmsController::class)->group(function () {
+Route::get('/', [OmsController::class, 'index'])->name('oms.dashboard')->middleware('auth'); // Example route
+Route::prefix('oms')->name('oms.')->middleware('auth')->controller(OmsController::class)->group(function () {
     Route::get('/', 'index')->name('index'); // Example route
     Route::get('/create', 'create')->name('create'); // Example route
 

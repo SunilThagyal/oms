@@ -68,10 +68,11 @@
             <h1 class="font-['Pacifico'] text-4xl text-primary mb-2">{{config("app.name")}}</h1>
             <p class="text-gray-600">Welcome back! Please login to your account.</p>
          </div>
-         <form id="loginForm" class="space-y-6">
+         <form id="loginForm" action="{{route("auth.login")}}" method="post" class="space-y-6">
+            @csrf
             <div class="opacity-0 fade-in fade-in-delay-1">
                <div class="relative">
-                  <input type="email" id="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white/50 focus:border-primary focus:outline-none transition-colors text-sm placeholder:text-gray-400" placeholder="Email address" required>
+                  <input type="email" name="email" id="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white/50 focus:border-primary focus:outline-none transition-colors text-sm placeholder:text-gray-400" placeholder="Email address" required>
                   <div class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
                      <i class="ri-mail-line"></i>
                   </div>
@@ -79,7 +80,7 @@
             </div>
             <div class="opacity-0 fade-in fade-in-delay-2">
                <div class="relative">
-                  <input type="password" id="password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white/50 focus:border-primary focus:outline-none transition-colors text-sm placeholder:text-gray-400" placeholder="Password" required>
+                  <input type="password"  name="password" id="password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white/50 focus:border-primary focus:outline-none transition-colors text-sm placeholder:text-gray-400" placeholder="Password" required>
                   <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
                   <i class="ri-eye-line"></i>
                   </button>
@@ -87,7 +88,7 @@
             </div>
             <div class="flex items-center justify-between opacity-0 fade-in fade-in-delay-2">
                <label class="flex items-center">
-               <input type="checkbox" class="w-4 h-4 border-2 border-gray-300 rounded text-primary focus:ring-primary">
+               <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} class="w-4 h-4 border-2 border-gray-300 rounded text-primary focus:ring-primary">
                <span class="ml-2 text-sm text-gray-600">Remember me</span>
                </label>
                <a href="{{route("auth.foget_password")}}" class="text-sm text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
@@ -155,6 +156,7 @@
                     return;
                 }
                 showNotification('Logging in...', 'success');
+                form.submit();
             });
 
             function showNotification(message, type = 'error') {
