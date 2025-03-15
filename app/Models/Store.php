@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Store extends Model
 {
 
+    protected $fillable = [
+        'user_id', 'name', 'address', 'country', 'city', 'state', 'pincode', 'main_image'
+    ];
 
     public function user()
     {
