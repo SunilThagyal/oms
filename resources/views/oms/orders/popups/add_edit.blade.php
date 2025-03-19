@@ -44,7 +44,7 @@
                                 </div>
 
                                 <!-- Search Results Dropdown -->
-                                @if ($showDropdown && !$customers->isEmpty())
+                                @if ($showCustomerDropdown && !$customers->isEmpty())
                                     <div class="absolute left-0 w-full bg-white shadow-lg rounded-lg mt-1 z-50 max-h-60 overflow-y-auto">
                                         @foreach ($customers as $customer)
                                             <div
@@ -59,7 +59,7 @@
                                             </div>
                                         @endforeach
                                     </div>
-                                @elseif($showDropdown && strlen($searchCustomer) > 1)
+                                @elseif($showCustomerDropdown && strlen($searchCustomer) > 1)
                                 <span class="text-yellow-600 text-xs mt-1 block">{{ __("No such customer exists, add details manually.") }}</span>
                                 {{-- <div class="absolute left-0 w-full bg-white shadow-lg rounded-lg mt-1 px-4 py-2 text-gray-500">
                                         No results found. Press Enter to add a new customer.
@@ -87,18 +87,20 @@
                         @foreach ($data['order'] as $index => $product)
                             <div class="flex gap-4 items-start product-row">
                                 <div class="flex-1 flex flex-col">
-                                    <input type="text" wire:model.live="data.order.{{ $index }}.name"
+                                    {{-- <input type="text" wire:model.live="data.order.{{ $index }}.name"
                                         placeholder="Product Name"
-                                        class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary">
+                                        class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary"> --}}
+                                        {{--  --}}
+                                        @include('livewire.components.product_search', ['index' => $index])
+                                        {{--  --}}
                                     <span
                                         class="text-red-500 text-xs">@error('data.order.' . $index . '.name') {{ $message }} @enderror</span>
                                 </div>
-                                <div class="flex flex-col min-w-[6rem]">
+                                <div class="flex-1 flex flex-col">
                                     <input type="number" wire:model.live="data.order.{{ $index }}.quantity" placeholder="Qty"
                                         class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary"
                                         min="1">
-                                    <span
-                                        class="text-red-500 text-xs">@error('data.order.' . $index . '.quantity') {{ $message }} @enderror</span>
+                                    <span class="text-red-500 text-xs">@error('data.order.' . $index . '.quantity') {{ $message }} @enderror</span>
                                 </div>
                                 <div class="flex-1 flex flex-col">
                                     <input type="number" wire:model.live="data.order.{{ $index }}.price" placeholder="Price"

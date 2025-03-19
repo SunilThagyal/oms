@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Traits\OrderValidation;
-use App\Models\User;
+use App\Models\{User,Product};
 
 class Order extends Component
 {
@@ -14,7 +14,12 @@ class Order extends Component
     public $customers = [];
     public $selectedCustomer = null;
     public $searchCustomer = '';
-    public $showDropdown = false;
+    public $showCustomerDropdown = false;
+    // !Product properties
+    public $products = [];
+    public $selectedProduct = null;
+    public $showProductDropdown = false;
+    public $searchProduct = [];
 
     public $data = [
         'customer' => [
@@ -72,7 +77,7 @@ class Order extends Component
         $this->selectedCustomer = User::find($customerId);
         $this->data['customer']['name'] = $this->selectedCustomer->name; // Update the input with the selected customer's name
         $this->data['customer']['email'] = $this->selectedCustomer->email;
-        $this->showDropdown = false; // Hide the dropdown
+        $this->showCustomerDropdown = false; // Hide the dropdown
     }
 
     public function updatedSearchCustomer($value)
@@ -82,11 +87,25 @@ class Order extends Component
             $this->customers = User::where('name', 'like', '%' . $value . '%')
                                        ->orWhere('email', 'like', '%' . $value . '%')
                                        ->get();
-            $this->showDropdown = true; // Show the dropdown when there are results
+            $this->showCustomerDropdown = true; // Show the dropdown when there are results
         } else {
             $this->customers = [];
-            $this->showDropdown = false; // Hide the dropdown if the search query is too short
+            $this->showCustomerDropdown = false; // Hide the dropdown if the search query is too short
         }
+    }
+
+    public function updatedSearchProduct($value, $index)
+    {
+        $value = trim($value); // Remove unnecessary spaces
+        $this->data['order'][$index]['name'] = $value;
+        if (strlen($value) < 1) {
+            $this->products = [];
+            $this->showProductDropdown = false;
+            return;
+        }
+
+        $this->products = Product::where('name', 'like', "%{$value}%")->limit(10)->get();
+        $this->showProductDropdown = true;
     }
 
     public function closeDropdown()
