@@ -26,9 +26,10 @@ class Order extends Component
             'name' => '',
             'email' => '',
             'phone' => '',
+            'user_id' => 'null',
         ],
         'order' => [
-            ['name' => '', 'quantity' => 1, 'price' => 0.00]
+            ['name' => '', 'quantity' => 1, 'price' => 0.00, 'product_id' => null],
         ],
         'status' => 'Pending',
         'date' => '',
@@ -41,7 +42,10 @@ class Order extends Component
 
     public function updated($propertyName)
     {
-        $this->validateOnly($propertyName);
+        if($propertyName == 'searchCustomer'){
+            $this->updatedSearchCustomer($this->searchCustomer);
+        }
+        $this->validate();
     }
 
     public function addProduct()
@@ -58,7 +62,7 @@ class Order extends Component
     public function saveOrder()
     {
         $this->validate();
-
+        DD( $this->data);
         // Save order logic...
         session()->flash('message', 'Order saved successfully.');
 
@@ -77,12 +81,16 @@ class Order extends Component
         $this->selectedCustomer = User::find($customerId);
         $this->data['customer']['name'] = $this->selectedCustomer->name; // Update the input with the selected customer's name
         $this->data['customer']['email'] = $this->selectedCustomer->email;
+        $this->data['customer']['user_id'] = $this->selectedCustomer->id;
         $this->showCustomerDropdown = false; // Hide the dropdown
     }
 
     public function updatedSearchCustomer($value)
     {
         if (strlen($value) > 1) {
+            $this->data['customer']['name'] = null; // Update the input with the selected customer's name
+            $this->data['customer']['email'] = null;
+            $this->data['customer']['user_id'] = null;
             $this->data['customer']['name'] = $value;
             $this->customers = User::where('name', 'like', '%' . $value . '%')
                                        ->orWhere('email', 'like', '%' . $value . '%')
@@ -94,6 +102,19 @@ class Order extends Component
         }
     }
 
+
+    public function selectProduct($productId,$index)
+    {
+        // Logic to select the customer
+        $this->selectedProduct = Product::find($productId);
+        $this->searchProduct[$index] = $this->selectedProduct->name;
+        $this->data['order'][$index]['name'] = $this->selectedProduct->name;
+        $this->data['order'][$index]['price'] = $this->selectedProduct->price;
+        $this->data['order'][$index]['product_id'] = $this->selectedProduct->id;
+        $this->showProductDropdown = false; // Hide the dropdown
+    }
+
+
     public function updatedSearchProduct($value, $index)
     {
         $value = trim($value); // Remove unnecessary spaces
@@ -103,9 +124,8 @@ class Order extends Component
             $this->showProductDropdown = false;
             return;
         }
-
         $this->products = Product::where('name', 'like', "%{$value}%")->limit(10)->get();
-        $this->showProductDropdown = true;
+        $this->showProductDropdown = 'productDropDownId'.$index;
     }
 
     public function closeDropdown()

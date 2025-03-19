@@ -91,7 +91,7 @@
                                         placeholder="Product Name"
                                         class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary"> --}}
                                         {{--  --}}
-                                        @include('livewire.components.product_search', ['index' => $index])
+                                        @include('livewire.components.product_search', ['outer_loop_index' => $index,'drop_down_id' => 'productDropDownId'.$index])
                                         {{--  --}}
                                     <span
                                         class="text-red-500 text-xs">@error('data.order.' . $index . '.name') {{ $message }} @enderror</span>
@@ -181,7 +181,7 @@
                     </svg>
                 </div>
                 <button type="submit"
-                @disabled($errors->any())
+                {{-- @disabled($errors->any()) --}}
                     class="px-4 py-2 text-sm bg-primary text-white rounded hover:bg-primary/90 flex items-center gap-2 relative">
                     <span wire:loading.remove wire:target="saveOrder">Create Order</span>
                     <div wire:loading wire:target="saveOrder">
