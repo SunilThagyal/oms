@@ -1,7 +1,4 @@
-@extends('oms.layout.app')
-
-@section('content')
-{{-- <main class="flex-1 overflow-y-auto p-6">
+<main class="flex-1 overflow-y-auto p-6">
     <div class="p-6">
         <div class="w-full max-w-[1400px] mx-auto">
             <div class="mb-8">
@@ -58,7 +55,7 @@
                                 </button>
                             </div>
                             <div class="relative">
-                                <button id="addOrderBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-500 justify-center z-50">                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
+                                <button id="addOrderBtn" wire:click="addEditOrder" class="w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-500 justify-center z-50">                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
                                     <span class="whitespace-nowrap">Add Order</span>
                                 </button>
                             </div>
@@ -204,9 +201,4 @@
         </div>
     </div>
     @include("oms.orders.popups.add_edit")
-</main> --}}
-<livewire:order />
-@endsection
-@push('scripts')
-<script src="{{asset("assets/js/order.js")}}"></script>
-@endpush
+</main>
