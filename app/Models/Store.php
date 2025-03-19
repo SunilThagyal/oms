@@ -8,7 +8,12 @@ class Store extends Model
 {
 
     protected $fillable = [
-        'user_id', 'name', 'address', 'country', 'city', 'state', 'pincode', 'main_image'
+        'name',
+        'description',
+        'category_id',
+        'user_id',
+        'main_image',
+        'status',
     ];
 
     public function user()
@@ -25,5 +30,12 @@ class Store extends Model
     {
         return $this->hasMany(StoreImage::class);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+
 
 }
