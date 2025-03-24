@@ -1,3 +1,4 @@
+{{-- add order modal --}}
 <div id="addOrderModal"
     class="fixed inset-0 bg-black/50 items-center justify-center z-50 {{ $addEditOrderModal ? 'flex' : 'hidden' }}">
     <div class="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">

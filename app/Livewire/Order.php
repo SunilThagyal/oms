@@ -3,12 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Traits\OrderValidation;
+use App\Traits\{OrderValidation,orderTrait};
 use App\Models\{User,Product};
 
 class Order extends Component
 {
-    use OrderValidation; // ✅ Import the trait here
+    use OrderValidation,orderTrait; // ✅ Import the trait here
     public $addEditOrderModal = false;
     public $editMode = false;
     public $customers = [];
@@ -20,6 +20,8 @@ class Order extends Component
     public $selectedProduct = null;
     public $showProductDropdown = false;
     public $searchProduct = [];
+    //! Order listing
+    public $orders = [];
 
     public $data = [
         'customer' => [
@@ -34,7 +36,10 @@ class Order extends Component
         'status' => 'Pending',
         'date' => '',
     ];
-
+    public function mount(){
+        $this->orders = $this->getOrders();
+        // dd($this->orders);
+    }
     public function addEditOrder()
     {
         $this->addEditOrderModal = !$this->addEditOrderModal;
@@ -62,11 +67,13 @@ class Order extends Component
     public function saveOrder()
     {
         $this->validate();
-        DD( $this->data);
+        // dd($this->data);
+        $order = $this->createOrder($this->data); // ✅ Call the method from the trait
         // Save order logic...
-        session()->flash('message', 'Order saved successfully.');
-
+        session()->flash('status', $order['status']);
+        session()->flash('message', $order['message']);
         $this->reset();
+        $this->orders = $this->getOrders();
     }
 
 
@@ -125,6 +132,8 @@ class Order extends Component
             return;
         }
         $this->products = Product::where('name', 'like', "%{$value}%")->limit(10)->get();
+        if($this->products->count() <= 0)
+            $this->data['order'][$index]['product_id'] = null;
         $this->showProductDropdown = 'productDropDownId'.$index;
     }
 
@@ -132,7 +141,6 @@ class Order extends Component
     {
         $this->customers = [];
     }
-
 
     public function render()
     {

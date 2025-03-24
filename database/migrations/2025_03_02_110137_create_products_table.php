@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->integer('quantity')->default(0); // Added quantity field
             $table->string('main_image')->nullable();
+            $table->softDeletes(); // Added soft deletes
             $table->timestamps();
         });
     }

@@ -75,7 +75,55 @@
                             </tr>
                         </thead>
                         <tbody id="orderTableBody">
+                            @forelse ($orders as $order)
                             <tr class="border-b hover:bg-gray-50">
+                                <td class="py-4 px-4 text-sm">ORD-{{hash_id($order->id)}}</td>
+                                <td class="py-4 px-4 text-sm">{{($order->customer->name)}}</td>
+                                <td class="py-4 px-4 text-sm">{{$order->created_at}}</td>
+                                <td class="py-4 px-4">
+                                    <span class="px-2 py-1 text-xs rounded-full {{$order->status_class}}">{{$order->status}}</span>
+                                </td>
+                                <td class="py-4 px-4 text-sm">${{$order->total_price}}</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button onclick="viewOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button onclick="editOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+
+                            @endforelse
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-4 px-4 text-sm">ORD-2025-001</td>
+                                <td class="py-4 px-4 text-sm">Emily Thompson</td>
+                                <td class="py-4 px-4 text-sm">2025-02-26</td>
+                                <td class="py-4 px-4">
+                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                </td>
+                                <td class="py-4 px-4 text-sm">$299.99</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button onclick="viewOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button onclick="editOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button onclick="deleteOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{-- <tr class="border-b hover:bg-gray-50">
                                 <td class="py-4 px-4 text-sm">ORD-2025-001</td>
                                 <td class="py-4 px-4 text-sm">Emily Thompson</td>
                                 <td class="py-4 px-4 text-sm">2025-02-26</td>
@@ -184,7 +232,7 @@
                                         </button>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
