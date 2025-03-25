@@ -47,24 +47,15 @@
                      </tr>
                   </thead>
                   <tbody>
+                    @forelse ($viewed_order?->orderProducts ?? [] as $item)
                      <tr class="border-t">
-                        <td class="px-4 py-2 text-sm">Premium Wireless Headphones</td>
-                        <td class="px-4 py-2 text-sm">1</td>
-                        <td class="px-4 py-2 text-sm">$199.99</td>
-                        <td class="px-4 py-2 text-sm">$199.99</td>
+                        <td class="px-4 py-2 text-sm">{{$item->product->name}}</td>
+                        <td class="px-4 py-2 text-sm">{{$item->quantity}}</td>
+                        <td class="px-4 py-2 text-sm">${{$item->price}}</td>
+                        <td class="px-4 py-2 text-sm">${{$item->quantity * $item->price}}</td>
                      </tr>
-                     <tr class="border-t">
-                        <td class="px-4 py-2 text-sm">USB-C Charging Cable</td>
-                        <td class="px-4 py-2 text-sm">2</td>
-                        <td class="px-4 py-2 text-sm">$15.99</td>
-                        <td class="px-4 py-2 text-sm">$31.98</td>
-                     </tr>
-                     <tr class="border-t">
-                        <td class="px-4 py-2 text-sm">Phone Case</td>
-                        <td class="px-4 py-2 text-sm">1</td>
-                        <td class="px-4 py-2 text-sm">$29.99</td>
-                        <td class="px-4 py-2 text-sm">$29.99</td>
-                     </tr>
+                        @empty
+                    @endforelse
                   </tbody>
                </table>
             </div>

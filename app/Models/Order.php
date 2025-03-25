@@ -36,7 +36,9 @@ class Order extends Model
 
     public function getTotalPriceAttribute()
     {
-        return $this->orderProducts()->sum('price');
+        return $this->orderProducts->sum(function($orderProduct) {
+            return $orderProduct->price ** $orderProduct->quantity;
+        });
     }
 
     public function getStatusClassAttribute()

@@ -42,29 +42,6 @@ class Order extends Component
         'status' => 'Pending',
         'date' => '',
     ];
-    public function mount(){
-        // $this->orders = $this->getOrders();
-        // dd($this->orders);
-    }
-    // public function toggleModal($modelName,$data = null)
-    // {
-    //     if($modelName == 'addEditOrderModal'){
-    //         $this->addEditOrderModal = !$this->addEditOrderModal;
-    //     }elseif($modelName == 'viewOrderModal'){
-    //         $this->view_btn_loading = ['active' => true, 'id' => $data];
-    //         $this->viewOrderModal = !$this->viewOrderModal;
-    //         $response = $this->getOrder($data);
-    //         if($response['status'] == 'success'){
-    //             $this->viewed_order = $this->getOrder($data)['data'];
-    //             // dd($this->order->toArray());
-    //         }else{
-    //             session()->flash('status', $response['status']);
-    //             session()->flash('message', $response['message']);
-    //         }
-    //         $this->view_btn_loading = ['active' => false, 'id' => null];
-    //     }
-    // }
-
     public function toggleModal($modelName, $data = null)
     {
         if ($modelName == 'addEditOrderModal') {
