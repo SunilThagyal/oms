@@ -55,7 +55,7 @@
                                 </button>
                             </div>
                             <div class="relative">
-                                <button id="addOrderBtn" wire:click="addEditOrder" class="w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-500 justify-center z-50">                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
+                                <button id="addOrderBtn" wire:click="toggleModal('addEditOrderModal')" class="w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-500 justify-center z-50">                                    <i class="ri-add-line w-4 h-4 flex items-center justify-center"></i>
                                     <span class="whitespace-nowrap">Add Order</span>
                                 </button>
                             </div>
@@ -76,28 +76,43 @@
                         </thead>
                         <tbody id="orderTableBody">
                             @forelse ($orders as $order)
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-{{hash_id($order->id)}}</td>
-                                <td class="py-4 px-4 text-sm">{{($order->customer->name)}}</td>
-                                <td class="py-4 px-4 text-sm">{{$order->created_at}}</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full {{$order->status_class}}">{{$order->status}}</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">${{$order->total_price}}</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
+                                <tr wire:key="{{'ORD-'.hash_id($order->id)}}" class="border-b hover:bg-gray-50">
+                                    <td class="py-4 px-4 text-sm">ORD-{{hash_id($order->id)}}</td>
+                                    <td class="py-4 px-4 text-sm">{{($order->customer->name)}}</td>
+                                    <td class="py-4 px-4 text-sm">{{$order->created_at}}</td>
+                                    <td class="py-4 px-4">
+                                        <span class="px-2 py-1 text-xs rounded-full {{$order->status_class}}">{{$order->status}}</span>
+                                    </td>
+                                    <td class="py-4 px-4 text-sm">${{$order->total_price}}</td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center justify-end gap-2">
+                                            <!-- Show the "view" button unless it's in loading state -->
+                                            <button wire:click="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
+                                                wire:loading.remove
+                                                wire:target="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
+                                                wire:loading.attr="disabled"
+                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500 relative">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                            <button wire:loading.delay wire:target="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
+                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500 relative">
+                                            <div class="absolute inset-0 flex items-center justify-center bg-gray-50 opacity-75 rounded-full">
+                                                <svg class="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"/>
+                                                    <path d="M4 12a8 8 0 0116 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+                                                </svg>
+                                            </div>
                                         </button>
-                                        <button onclick="editOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                            {{--  --}}
+                                            <button onclick="editOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
                             @empty
 
                             @endforelse
@@ -249,4 +264,5 @@
         </div>
     </div>
     @include("oms.orders.popups.add_edit")
+    @include("oms.orders.popups.view_order")
 </main>

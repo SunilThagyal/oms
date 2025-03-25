@@ -9,12 +9,14 @@ use App\Models\{User,Product};
 class Order extends Component
 {
     use OrderValidation,orderTrait; // ✅ Import the trait here
-    public $addEditOrderModal = false;
     public $editMode = false;
     public $customers = [];
     public $selectedCustomer = null;
     public $searchCustomer = '';
     public $showCustomerDropdown = false;
+    // ! Modal properties
+    public $addEditOrderModal = false;
+    public $viewOrderModal = false;
     // !Product properties
     public $products = [];
     public $selectedProduct = null;
@@ -22,6 +24,10 @@ class Order extends Component
     public $searchProduct = [];
     //! Order listing
     public $orders = [];
+    //! order data
+    public $viewed_order;
+
+    //! loading state varaibles
 
     public $data = [
         'customer' => [
@@ -37,13 +43,50 @@ class Order extends Component
         'date' => '',
     ];
     public function mount(){
-        $this->orders = $this->getOrders();
+        // $this->orders = $this->getOrders();
         // dd($this->orders);
     }
-    public function addEditOrder()
+    // public function toggleModal($modelName,$data = null)
+    // {
+    //     if($modelName == 'addEditOrderModal'){
+    //         $this->addEditOrderModal = !$this->addEditOrderModal;
+    //     }elseif($modelName == 'viewOrderModal'){
+    //         $this->view_btn_loading = ['active' => true, 'id' => $data];
+    //         $this->viewOrderModal = !$this->viewOrderModal;
+    //         $response = $this->getOrder($data);
+    //         if($response['status'] == 'success'){
+    //             $this->viewed_order = $this->getOrder($data)['data'];
+    //             // dd($this->order->toArray());
+    //         }else{
+    //             session()->flash('status', $response['status']);
+    //             session()->flash('message', $response['message']);
+    //         }
+    //         $this->view_btn_loading = ['active' => false, 'id' => null];
+    //     }
+    // }
+
+    public function toggleModal($modelName, $data = null)
     {
-        $this->addEditOrderModal = !$this->addEditOrderModal;
+        if ($modelName == 'addEditOrderModal') {
+            $this->addEditOrderModal = !$this->addEditOrderModal;
+        } elseif ($modelName == 'viewOrderModal') {
+            // Set loading state when the modal is opened and button is clicked
+            // Toggle modal visibility
+            $this->viewOrderModal = !$this->viewOrderModal;
+
+            // Fetch the order data
+            $response = $this->getOrder($data);
+
+            // Handle the response
+            if ($response['status'] == 'success') {
+                $this->viewed_order = $response['data'];
+            } else {
+                session()->flash('status', $response['status']);
+                session()->flash('message', $response['message']);
+            }
+        }
     }
+
 
     public function updated($propertyName)
     {
@@ -73,13 +116,22 @@ class Order extends Component
         session()->flash('status', $order['status']);
         session()->flash('message', $order['message']);
         $this->reset();
-        $this->orders = $this->getOrders();
+        // $this->orders = $this->getOrders();
     }
 
 
-    public function closeModal()
+    public function closeModal($modelName='addEditOrderModal')
     {
         $this->reset();
+
+        if ($modelName == 'addEditOrderModal') {
+            $this->addEditOrderModal = false;
+        } elseif ($modelName == 'viewOrderModal') {
+            // Set loading state when the modal is opened and button is clicked
+            // Toggle modal visibility
+            $this->viewOrderModal = false;
+
+        }
     }
 
     public function selectCustomer($customerId)
@@ -144,6 +196,7 @@ class Order extends Component
 
     public function render()
     {
+        $this->orders = $this->getOrders();
         return view('livewire.order');
     }
 }

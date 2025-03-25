@@ -15,6 +15,7 @@ trait orderTrait
         // dd($orders);
         return $orders;
     }
+
     protected function createOrder(array $data): array
     {
         DB::beginTransaction();
@@ -31,6 +32,14 @@ trait orderTrait
             DB::rollBack();
             return $this->errorResponse($e);
         }
+    }
+
+    protected function getOrder($orderId): array
+    {
+        $order = Order::with('store', 'customer.customerDetails', 'orderProducts.product')->find(unhash_id($orderId));
+        return $order
+            ? $this->successResponse($order, 'Order retrieved successfully.')
+            : $this->notFoundResponse('Order');
     }
 
 

@@ -52,11 +52,8 @@ class Order extends Model
         }
     }
 
-    public function stores()
+    public function store()
     {
-        return $this->products()->join('products', 'order_product.product_id', '=', 'products.id')
-                                ->join('stores', 'products.store_id', '=', 'stores.id')
-                                ->select('stores.*')
-                                ->distinct();  // Distinct to avoid duplicate stores
+        return $this->hasOne(Store::class, 'id', 'store_id');
     }
 }
