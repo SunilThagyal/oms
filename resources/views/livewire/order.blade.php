@@ -96,17 +96,32 @@
                                             </button>
                                             <button wire:loading.delay wire:target="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
                                             class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500 relative">
-                                            <div class="absolute inset-0 flex items-center justify-center bg-gray-50 opacity-75 rounded-full">
-                                                <svg class="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"/>
-                                                    <path d="M4 12a8 8 0 0116 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
-                                                </svg>
-                                            </div>
-                                        </button>
-                                            {{--  --}}
-                                            <button onclick="editOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                                <div class="absolute inset-0 flex items-center justify-center bg-gray-50 opacity-75 rounded-full">
+                                                    <svg class="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"/>
+                                                        <path d="M4 12a8 8 0 0116 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                            {{-- edit button --}}
+                                            <button
+                                            wire:click="toggleModal('addEditOrderModal', '{{ hash_id($order->id) }}')"
+                                            wire:loading.remove
+                                            wire:target="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
+                                            wire:loading.attr="disabled"
+                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
                                                 <i class="ri-edit-line"></i>
                                             </button>
+                                            <button wire:loading.delay wire:target="toggleModal('addEditOrderModal', '{{ hash_id($order->id) }}')"
+                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500 relative">
+                                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50 opacity-75 rounded-full">
+                                                        <svg class="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.2"/>
+                                                            <path d="M4 12a8 8 0 0116 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+                                                        </svg>
+                                                    </div>
+                                            </button>
+                                            {{--  --}}
                                             <button onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>

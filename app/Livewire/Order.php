@@ -26,6 +26,7 @@ class Order extends Component
     public $orders = [];
     //! order data
     public $viewed_order;
+    public $edit_order;
 
     //! loading state varaibles
 
@@ -42,10 +43,30 @@ class Order extends Component
         'status' => 'Pending',
         'date' => '',
     ];
+
     public function toggleModal($modelName, $data = null)
     {
         if ($modelName == 'addEditOrderModal') {
             $this->addEditOrderModal = !$this->addEditOrderModal;
+            if($data){
+                // Fetch the order data
+                $response = $this->getOrder($data);
+
+                // Handle the response
+                if ($response['status'] == 'success') {
+                    $this->viewed_order = $response['data'];
+                    $this->selectCustomer($this->viewed_order->customer->id);
+                    $this->data['status'] = $this->viewed_order->status;
+                    $this->data['date'] = $this->viewed_order->date;
+                    foreach( $this->viewed_order->orderProducts as $index => $product){
+                            $this->selectProduct($product->product_id,$index);
+                            $this->data['order'][$index]['quantity'] = $product->quantity;
+                    }
+                } else {
+                    session()->flash('status', $response['status']);
+                    session()->flash('message', $response['message']);
+                }
+            }
         } elseif ($modelName == 'viewOrderModal') {
             // Set loading state when the modal is opened and button is clicked
             // Toggle modal visibility
@@ -117,6 +138,7 @@ class Order extends Component
         $this->selectedCustomer = User::find($customerId);
         $this->data['customer']['name'] = $this->selectedCustomer->name; // Update the input with the selected customer's name
         $this->data['customer']['email'] = $this->selectedCustomer->email;
+        $this->data['customer']['phone'] = $this->selectedCustomer->customerDetails->phone ?? null;
         $this->data['customer']['user_id'] = $this->selectedCustomer->id;
         $this->showCustomerDropdown = false; // Hide the dropdown
     }

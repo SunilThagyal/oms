@@ -31,7 +31,7 @@
             </div>
             <div>
                <p class="text-sm font-medium text-gray-500">Phone</p>
-               <p class="mt-1">{{$viewed_order?->customer?->customerDetails->phone ?? 'Nan'}}</p>
+               <p class="mt-1">{{$viewed_order?->customer?->customerDetails->phone ?? ' '}}</p>
             </div>
          </div>
          <div class="mt-6">
@@ -62,7 +62,7 @@
          </div>
          <div class="mt-6 text-right">
             <p class="text-sm font-medium text-gray-500">Total Amount</p>
-            <p class="text-xl font-semibold mt-1">${{$order->total_price}}</p>
+            <p class="text-xl font-semibold mt-1">${{$viewed_order?->total_price ?? 0}}</p>
          </div>
       </div>
       <div class="p-6 border-t flex justify-end">
