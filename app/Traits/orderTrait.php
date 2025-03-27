@@ -16,13 +16,13 @@ trait orderTrait
         return $orders;
     }
 
-    protected function createOrder(array $data): array
+    protected function createOrder(array $data, $orderId = null): array
     {
         DB::beginTransaction();
-
         try {
+            $orderId = $orderId ? unhash_id($orderId) : null;
             $customer = $this->resolveCustomer($data['customer']);
-            $order = $this->createNewOrder($customer->id, $data);
+            $order = $this->createNewOrder($customer->id, $data, $orderId);
             $this->attachOrderItems($order->id, $data['order']);
 
             DB::commit();
@@ -55,9 +55,11 @@ trait orderTrait
             : $this->createCustomer($customerData);
     }
 
-    private function createNewOrder(int $customerId, array $data): Order
+    private function createNewOrder(int $customerId, array $data, $orderId): Order
     {
-        return Order::create([
+        return Order::updateOrCreate(
+            ['id' => $orderId],
+            [
             'customer_id' => $customerId,
             'store_id' => auth()->user()->store->id,
             'status' => $data['status'],
@@ -69,7 +71,8 @@ trait orderTrait
     {
         foreach ($orderItems as $item) {
             $productId = $item['product_id'] ?? $this->createProduct($item)->id;
-            OrderProduct::create([
+            $orderProductId = isset($item['order_product_id']) ?  unhash_id($item['order_product_id']) : null;
+            OrderProduct::updateOrCreate(['id' => $orderProductId],[
                 'order_id' => $orderId,
                 'product_id' => $productId,
                 'quantity' => $item['quantity'],

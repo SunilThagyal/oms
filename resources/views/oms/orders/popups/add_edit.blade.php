@@ -9,7 +9,7 @@
             </button>
         </div>
 
-        <form wire:submit.prevent="saveOrder" class="p-6">
+        <form wire:submit.prevent="saveOrder('{{ isset($viewed_order) ? hash_id($viewed_order?->id) : null}}')" class="p-6">
             <div class="space-y-6">
                 <!-- Customer Information -->
                 <div>

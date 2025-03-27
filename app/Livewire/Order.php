@@ -60,6 +60,7 @@ class Order extends Component
                     $this->data['date'] = $this->viewed_order->date;
                     foreach( $this->viewed_order->orderProducts as $index => $product){
                             $this->selectProduct($product->product_id,$index);
+                            $this->data['order'][$index]['order_product_id'] = hash_id($product->id);
                             $this->data['order'][$index]['quantity'] = $product->quantity;
                     }
                 } else {
@@ -105,11 +106,11 @@ class Order extends Component
         $this->data['order'] = array_values($this->data['order']); // Reindex array
     }
 
-    public function saveOrder()
+    public function saveOrder($orderId = null)
     {
         $this->validate();
         // dd($this->data);
-        $order = $this->createOrder($this->data); // ✅ Call the method from the trait
+        $order = $this->createOrder($this->data, $orderId); // ✅ Call the method from the trait
         // Save order logic...
         session()->flash('status', $order['status']);
         session()->flash('message', $order['message']);
