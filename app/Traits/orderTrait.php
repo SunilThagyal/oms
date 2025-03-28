@@ -1,6 +1,6 @@
 <?php
 namespace App\Traits;
-use App\Models\{Order,User,OrderProduct};
+use App\Models\{Order,User,OrderProduct, Store};
 use App\Traits\{customerTrait, productTrait, ResponseHandlerTrait};
 use Illuminate\Support\Facades\DB;
 trait orderTrait

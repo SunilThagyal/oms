@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
+use App\Models\{User,Store};
 use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
@@ -71,6 +71,14 @@ class UserSeeder extends Seeder
             $role = Role::where('name', $userData['role'])->first();
             if ($role) {
                 $user->syncRoles([$role]);
+            }
+            if($userData['role'] == "store"){
+                Store::create([
+                    'name' => 'Deep Store',
+                    'description' => 'a cake store',
+                    'user_id' => $user->id,
+                    'status' => true
+                ]);
             }
         }
     }
