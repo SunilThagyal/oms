@@ -106,8 +106,14 @@ class Order extends Component
                 'to' => $value['end']
             ];
         } else {
+
+            if($key == 'status' && $value ==  'all status'){
+                $this->filters['status'] = null;
+            }else{
             $this->filters[$key] = $value;
+            }
         }
+
     }
 
 

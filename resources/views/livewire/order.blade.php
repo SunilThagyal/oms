@@ -30,7 +30,7 @@
                 <div class="flex flex-col gap-4 mb-6">
                     <div class="flex flex-col gap-4">
                         <div class="relative w-full">
-                            <input type="text"   wire:model.live="filters.searchOrder"  id="searchInput" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 text-sm border rounded focus:outline-none focus:border-primary">
+                            <input type="text" value="{{$filters['searchOrder']}}"   wire:model.live="filters.searchOrder"  id="searchInput" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 text-sm border rounded focus:outline-none focus:border-primary">
                             <div class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400">
                                 <i class="ri-search-line"></i>
                             </div>
@@ -45,7 +45,7 @@
                             <div class="relative">
                                 <button id="statusFilter" class="w-full px-4 py-2 text-sm border rounded !rounded-button flex items-center gap-2 hover:bg-gray-50">
                                     <i class="ri-filter-3-line w-4 h-4 flex items-center justify-center"></i>
-                                    <span>All Status</span>
+                                    <span> {{!empty($filters['status']) ?  ucfirst($filters['status']) : ucfirst('All Status') }}</span>
                                 </button>
                             </div>
                             <div class="relative">
