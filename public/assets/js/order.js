@@ -255,35 +255,16 @@ function saveEditedOrder(orderId, form) {
 }
 
 // Delete order modal
-function deleteOrder(orderId) {
-    const confirmModal = document.createElement('div');
-    confirmModal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
-    confirmModal.innerHTML = `
-        <div class="bg-white rounded-lg w-full max-w-md mx-4">
-            <div class="p-6">
-                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto">
-                    <i class="ri-error-warning-line text-red-600 text-xl"></i>
-                </div>
-                <h3 class="mt-4 text-lg font-semibold text-center text-gray-900">Delete Order</h3>
-                <p class="mt-2 text-sm text-center text-gray-500">Are you sure you want to delete this order? This action cannot be undone.</p>
-                <div class="mt-6 flex items-center justify-center gap-4">
-                    <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-sm border rounded !rounded-button hover:bg-gray-50">Cancel</button>
-                    <button onclick="confirmDelete('${orderId}', this)" class="px-4 py-2 text-sm bg-red-600 text-white rounded !rounded-button hover:bg-red-700">Delete</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(confirmModal);
-}
+
 
 // Confirm delete
-function confirmDelete(orderId, button) {
-    orders = orders.filter(o => o.id !== orderId);
-    filteredOrders = filteredOrders.filter(o => o.id !== orderId);
-    renderOrders();
-    button.closest('.fixed').remove();
-    showToast('Order deleted successfully');
-}
+// function confirmDelete(orderId, button) {
+//     orders = orders.filter(o => o.id !== orderId);
+//     filteredOrders = filteredOrders.filter(o => o.id !== orderId);
+//     renderOrders();
+//     button.closest('.fixed').remove();
+//     showToast('Order deleted successfully');
+// }
 
 // Toast notification
 function showToast(message) {
@@ -314,7 +295,7 @@ document.getElementById('statusFilter').addEventListener('click', function() {
     dropdown.innerHTML = `
         <div class="py-1">
             ${['All Status', 'Pending', 'Processing', 'Completed', 'Cancelled'].map(status => `
-                <button class="w-full px-4 py-2 text-sm text-left hover:bg-gray-50" onclick="filterByStatus('${status}')">${status}</button>
+                <button  wire:click="setFilter('status', '${status.toLowerCase()}')" class="w-full px-4 py-2 text-sm text-left hover:bg-gray-50" onclick="filterByStatus('${status}')">${status}</button>
             `).join('')}
         </div>
     `;
@@ -367,6 +348,13 @@ document.getElementById('dateFilter').addEventListener('click', function() {
 function applyDateFilter() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    Livewire.dispatch('set-date-filter',  {
+        'key': 'date_range',
+        'value': {
+            'start': startDate,
+            'end': endDate
+        }
+    });
     if (startDate && endDate) {
         filteredOrders = orders.filter(order =>
             order.date >= startDate && order.date <= endDate

@@ -28,7 +28,7 @@
                                     <!-- Input Field -->
                                     <input
                                         type="text"
-                                        value="{{$viewed_order?->customer?->name ?? ''}}"
+                                        value="{{$viewed_order?->customer?->name ?? $data['customer']['name']}}"
                                         wire:model.live="searchCustomer"
                                         placeholder="Search or Enter Name"
                                         class="w-full px-3 py-1 text-sm bg-transparent focus:outline-none"

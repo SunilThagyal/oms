@@ -30,7 +30,7 @@
                 <div class="flex flex-col gap-4 mb-6">
                     <div class="flex flex-col gap-4">
                         <div class="relative w-full">
-                            <input type="text" id="searchInput" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 text-sm border rounded focus:outline-none focus:border-primary">
+                            <input type="text"   wire:model.live="filters.searchOrder"  id="searchInput" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 text-sm border rounded focus:outline-none focus:border-primary">
                             <div class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400">
                                 <i class="ri-search-line"></i>
                             </div>
@@ -107,7 +107,7 @@
                                             <button
                                             wire:click="toggleModal('addEditOrderModal', '{{ hash_id($order->id) }}')"
                                             wire:loading.remove
-                                            wire:target="toggleModal('viewOrderModal', '{{ hash_id($order->id) }}')"
+                                            wire:target="toggleModal('addEditOrderModal', '{{ hash_id($order->id) }}')"
                                             wire:loading.attr="disabled"
                                             class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
                                                 <i class="ri-edit-line"></i>
@@ -122,7 +122,7 @@
                                                     </div>
                                             </button>
                                             {{--  --}}
-                                            <button onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
+                                            <button   onclick="deleteOrder('ORD-{{hash_id($order->id)}}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>
                                         </div>
@@ -131,153 +131,50 @@
                             @empty
 
                             @endforelse
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-001</td>
-                                <td class="py-4 px-4 text-sm">Emily Thompson</td>
-                                <td class="py-4 px-4 text-sm">2025-02-26</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$299.99</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {{-- <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-001</td>
-                                <td class="py-4 px-4 text-sm">Emily Thompson</td>
-                                <td class="py-4 px-4 text-sm">2025-02-26</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$299.99</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-001')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-002</td>
-                                <td class="py-4 px-4 text-sm">Michael Chen</td>
-                                <td class="py-4 px-4 text-sm">2025-02-26</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Completed</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$149.50</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-002')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-002')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-002')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-003</td>
-                                <td class="py-4 px-4 text-sm">Sarah Williams</td>
-                                <td class="py-4 px-4 text-sm">2025-02-25</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Processing</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$499.99</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-003')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-003')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-003')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-004</td>
-                                <td class="py-4 px-4 text-sm">David Rodriguez</td>
-                                <td class="py-4 px-4 text-sm">2025-02-25</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Cancelled</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$89.99</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-004')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-004')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-004')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-4 px-4 text-sm">ORD-2025-005</td>
-                                <td class="py-4 px-4 text-sm">Jessica Lee</td>
-                                <td class="py-4 px-4 text-sm">2025-02-24</td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Completed</span>
-                                </td>
-                                <td class="py-4 px-4 text-sm">$199.99</td>
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button onclick="viewOrder('ORD-2025-005')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button onclick="editOrder('ORD-2025-005')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <button onclick="deleteOrder('ORD-2025-005')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-500">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-                    <div class="text-sm text-gray-500">
-                        Showing <span id="showingStart">1</span> to <span id="showingEnd">10</span> of <span id="totalItems">100</span> entries
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="px-3 py-1 border rounded !rounded-button text-sm hover:bg-gray-50 disabled:opacity-50" id="prevPage" disabled>Previous</button>
-                        <button class="px-3 py-1 border rounded !rounded-button text-sm hover:bg-gray-50" id="nextPage">Next</button>
-                    </div>
-                </div>
+                {{-- PAGINATION --}}
+                <x-pagination :paginator="$orders" />
+                {{-- end PAGINATION --}}
             </div>
         </div>
     </div>
     @include("oms.orders.popups.add_edit")
     @include("oms.orders.popups.view_order")
 </main>
+
+<script>
+    function deleteOrder(orderId) {
+        const confirmModal = document.createElement('div');
+        confirmModal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        confirmModal.innerHTML = `
+            <div class="bg-white rounded-lg w-full max-w-md mx-4">
+                <div class="p-6">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto">
+                        <i class="ri-error-warning-line text-red-600 text-xl"></i>
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-center text-gray-900">Delete Order</h3>
+                    <p class="mt-2 text-sm text-center text-gray-500">Are you sure you want to delete this order? This action cannot be undone.</p>
+                    <div class="mt-6 flex items-center justify-center gap-4">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-sm border rounded !rounded-button hover:bg-gray-50">Cancel</button>
+                        <button onclick="confirmDelete('${orderId}', this)" class="px-4 py-2 text-sm bg-red-600 text-white rounded !rounded-button hover:bg-red-700">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmModal);
+    }
+
+    function confirmDelete(orderId, button) {
+        Livewire.dispatch('delete-order', {'orderId': orderId});
+        Livewire.on('order-deleted', (data) => {
+            showToast(data[0].message, data[0].status);
+            // Optional: Update local lists
+            orders = orders.filter(o => o.id !== orderId);
+            filteredOrders = filteredOrders.filter(o => o.id !== orderId);
+            renderOrders();
+            button.closest('.fixed').remove();
+        });
+    }
+</script>

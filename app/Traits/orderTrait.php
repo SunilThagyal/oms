@@ -2,19 +2,26 @@
 namespace App\Traits;
 use App\Models\{Order,User,OrderProduct};
 use App\Traits\{customerTrait, productTrait, ResponseHandlerTrait};
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 trait orderTrait
 {
     use customerTrait,productTrait,ResponseHandlerTrait;
 
-    protected function getOrders(){
-        $store_id = auth()->user()->store->id;
-        $orders = Order::where('store_id', $store_id)
-        // ->with('customer','orderProducts.product')
-        ->get();
-        // dd($orders);
-        return $orders;
+    protected function getOrders($filters =null)
+    {
+        $query = Order::with(['customer', 'orderProducts.product'])
+            ->where('store_id', auth()->user()->store->id)
+            ->latest();
+
+        if ($filters) {
+            $this->applyFilters($query, $filters);
+        }
+
+        return $query->paginate(10);
     }
+
+
 
     protected function createOrder(array $data, $orderId = null): array
     {
@@ -40,6 +47,23 @@ trait orderTrait
         return $order
             ? $this->successResponse($order, 'Order retrieved successfully.')
             : $this->notFoundResponse('Order');
+    }
+
+    protected function deleteOrder($orderId): array
+    {
+        DB::beginTransaction();
+        try {
+            $order = Order::find(unhash_id($orderId));
+            if (!$order) {
+                return $this->notFoundResponse('Order');
+            }
+            $order->delete();
+            DB::commit();
+            return $this->successResponse(null, 'Order deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse($e);
+        }
     }
 
 
@@ -79,6 +103,49 @@ trait orderTrait
                 'price' => $item['price'],
             ]);
         }
+    }
+    private function applyFilters($query, array $filters)
+    {
+        // Apply search filter if it exists and is not empty
+        if (!empty($filters['searchOrder'] ?? null)) {
+            $this->applySearchConditions($query, trim($filters['searchOrder']));
+        }
+
+        // Apply status filter if it exists and is not empty
+        if (!empty($filters['status'] ?? null)) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Apply date range filter if both dates exist
+        if (!empty($filters['date_range']['from'] ?? null) &&
+            !empty($filters['date_range']['to'] ?? null)) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($filters['date_range']['from'])->startOfDay(),
+                Carbon::parse($filters['date_range']['to'])->endOfDay()
+            ]);
+        }
+
+        return $query;
+    }
+
+    private function applySearchConditions($query, string $searchTerm)
+    {
+        if (str_contains(strtoupper($searchTerm), 'ORD-')) {
+            $orderId = $this->normalizeOrderId($searchTerm);
+            $query->where('id', 'like', "%{$orderId}%");
+            return;
+        }
+
+        $query->where(function ($query) use ($searchTerm) {
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhereHas('customer', fn ($q) => $q->where('name', 'like', "%{$searchTerm}%"))
+                ->orWhereHas('orderProducts.product', fn ($q) => $q->where('name', 'like', "%{$searchTerm}%"));
+        });
+    }
+
+    private function normalizeOrderId(string $orderId): string
+    {
+        return unhash_id(str_replace(['ORD-', ' '], '', $orderId));
     }
 
 }

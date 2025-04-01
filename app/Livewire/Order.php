@@ -5,10 +5,12 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Traits\{OrderValidation,orderTrait};
 use App\Models\{User,Product};
+use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 class Order extends Component
 {
-    use OrderValidation,orderTrait; // ✅ Import the trait here
+    use OrderValidation,orderTrait, WithPagination; // ✅ Import the trait here
     public $editMode = false;
     public $customers = [];
     public $selectedCustomer = null;
@@ -23,10 +25,19 @@ class Order extends Component
     public $showProductDropdown = false;
     public $searchProduct = [];
     //! Order listing
-    public $orders = [];
+    // public $orders = [];
     //! order data
     public $viewed_order;
     public $edit_order;
+    // ! filter properties
+    public $filters = [
+        'searchOrder' => null,
+        'status' => null,
+        'date_range' => [
+            'to' => null,
+            'from' => null,
+        ]
+    ]; // can be orde id, customer name or product name or customer name
 
     //! loading state varaibles
 
@@ -51,7 +62,6 @@ class Order extends Component
             if($data){
                 // Fetch the order data
                 $response = $this->getOrder($data);
-
                 // Handle the response
                 if ($response['status'] == 'success') {
                     $this->viewed_order = $response['data'];
@@ -67,6 +77,7 @@ class Order extends Component
                     session()->flash('status', $response['status']);
                     session()->flash('message', $response['message']);
                 }
+                $this->validate();
             }
         } elseif ($modelName == 'viewOrderModal') {
             // Set loading state when the modal is opened and button is clicked
@@ -83,6 +94,19 @@ class Order extends Component
                 session()->flash('status', $response['status']);
                 session()->flash('message', $response['message']);
             }
+        }
+    }
+
+    #[On('set-date-filter')]
+    public function setFilter($key, $value)
+    {
+        if ($key == 'date_range' && is_array($value) && count($value) >= 2) {
+            $this->filters[$key] = [
+                'from' => $value['start'],
+                'to' => $value['end']
+            ];
+        } else {
+            $this->filters[$key] = $value;
         }
     }
 
@@ -137,6 +161,8 @@ class Order extends Component
     {
         // Logic to select the customer
         $this->selectedCustomer = User::find($customerId);
+        $this->data['customer']['name'] = $this->selectedCustomer->name;
+        $this->searchCustomer = $this->selectedCustomer->name; // Update the input with the selected customer's name
         $this->data['customer']['name'] = $this->selectedCustomer->name; // Update the input with the selected customer's name
         $this->data['customer']['email'] = $this->selectedCustomer->email;
         $this->data['customer']['phone'] = $this->selectedCustomer->customerDetails->phone ?? null;
@@ -189,6 +215,17 @@ class Order extends Component
         $this->showProductDropdown = 'productDropDownId'.$index;
     }
 
+    #[On('delete-order')]
+    public function delete($orderId)
+    {
+        $orderId = str_replace('ORD-', '', $orderId);
+        $response = $this->deleteOrder($orderId);
+        $this->dispatch('order-deleted', [
+            'status' => $response['status'],
+            'message' => $response['message'],
+        ]);
+    }
+
     public function closeDropdown()
     {
         $this->customers = [];
@@ -196,7 +233,9 @@ class Order extends Component
 
     public function render()
     {
-        $this->orders = $this->getOrders();
-        return view('livewire.order');
+        // $this->orders = $this->getOrders();
+        return view('livewire.order',[
+            'orders' =>  $this->getOrders($this->filters)
+        ]);
     }
 }
