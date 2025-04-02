@@ -315,55 +315,7 @@ function filterByStatus(status) {
     renderOrders();
 }
 
-// Date filter dropdown
-document.getElementById('dateFilter').addEventListener('click', function() {
-    const dropdown = document.createElement('div');
-    dropdown.className = 'absolute top-full mt-1 w-64 bg-white rounded shadow-lg border z-10 p-4';
-    dropdown.innerHTML = `
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                <input type="date" class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary" id="startDate">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                <input type="date" class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary" id="endDate">
-            </div>
-            <div class="flex justify-end gap-2">
-                <button class="px-3 py-1 text-sm border rounded !rounded-button hover:bg-gray-50" onclick="this.closest('.absolute').remove()">Cancel</button>
-                <button class="px-3 py-1 text-sm bg-primary text-white rounded !rounded-button hover:bg-primary/90" onclick="applyDateFilter()">Apply</button>
-            </div>
-        </div>
-    `;
-    this.parentElement.appendChild(dropdown);
-    const closeDropdown = (e) => {
-        if (!dropdown.contains(e.target) && !this.contains(e.target)) {
-            dropdown.remove();
-            document.removeEventListener('click', closeDropdown);
-        }
-    };
-    setTimeout(() => document.addEventListener('click', closeDropdown), 0);
-});
 
-function applyDateFilter() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    Livewire.dispatch('set-date-filter',  {
-        'key': 'date_range',
-        'value': {
-            'start': startDate,
-            'end': endDate
-        }
-    });
-    if (startDate && endDate) {
-        filteredOrders = orders.filter(order =>
-            order.date >= startDate && order.date <= endDate
-        );
-        renderOrders();
-        document.getElementById('dateFilter').querySelector('span').textContent = `${startDate} - ${endDate}`;
-    }
-    document.querySelector('.absolute').remove();
-}
 
 // Add order modal
 document.getElementById('addOrderBtn').addEventListener('click', () => {

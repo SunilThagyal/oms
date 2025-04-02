@@ -1,31 +1,32 @@
 <main class="flex-1 overflow-y-auto p-6">
     <div class="p-6">
         <div class="w-full max-w-[1400px] mx-auto">
-            <div class="mb-8">
+            {{-- <div class="mb-8">
                 <h1 class="text-2xl font-semibold text-gray-900 mb-6">Orders</h1>
                 <div class="flex flex-wrap gap-2 border-b overflow-x-auto pb-2">
-                    <button class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button active" data-status="all">
+                    <button wire:click="setFilter('status', '')" class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button active {{ empty($filters['status'])  || $filters['status'] == 'all'  ? 'border-gray-500 text-gray-900 font-semibold' : '' }}" data-status="all">
                         All Orders
-                        <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded-full" id="all-count">0</span>
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded-full" id="all-count">{{orderCount('all') ?? 0}}</span>
                     </button>
-                    <button class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button" data-status="Pending">
+                    <button  wire:click="setFilter('status', 'pending')" class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button {{ $filters['status'] == 'pending'  ? 'border-gray-500 text-gray-900 font-semibold' : '' }}" data-status="Pending">
                         Pending
-                        <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full" id="pending-count">0</span>
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full" id="pending-count">{{orderCount('pending') ?? 0}}</span>
                     </button>
-                    <button class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button" data-status="Processing">
+                    <button  wire:click="setFilter('status', 'processing')" class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button {{ $filters['status'] == 'processing'  ? 'border-gray-500 text-gray-900 font-semibold' : '' }}" data-status="Processing">
                         Processing
-                        <span class="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full" id="processing-count">0</span>
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full" id="processing-count">{{orderCount('processing') ?? 0}}</span>
                     </button>
-                    <button class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button" data-status="Completed">
+                    <button  wire:click="setFilter('status', 'completed')" class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button {{ $filters['status'] == 'completed'  ? 'border-gray-500 text-gray-900 font-semibold' : '' }}" data-status="Completed">
                         Completed
-                        <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full" id="completed-count">0</span>
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full" id="completed-count">{{orderCount('completed') ?? 0}}</span>
                     </button>
-                    <button class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button" data-status="Cancelled">
+                    <button wire:click="setFilter('status', 'cancelled')" class="px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap tab-button {{ $filters['status'] == 'cancelled'  ? 'border-gray-500 text-gray-900 font-semibold' : '' }}" data-status="Cancelled">
                         Cancelled
-                        <span class="ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full" id="cancelled-count">0</span>
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full" id="cancelled-count">{{orderCount('cancelled') ?? 0}}</span>
                     </button>
                 </div>
-            </div>
+            </div> --}}
+            @include("livewire.components.order_status_navigation")
             <div class="bg-white rounded shadow-sm p-4 sm:p-6 mb-6">
                 <div class="flex flex-col gap-4 mb-6">
                     <div class="flex flex-col gap-4">
@@ -36,12 +37,38 @@
                             </div>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {{--  --}}
                             <div class="relative">
+                                <!-- Date Filter Button -->
                                 <button id="dateFilter" class="w-full px-4 py-2 text-sm border rounded !rounded-button flex items-center gap-2 hover:bg-gray-50">
                                     <i class="ri-calendar-line w-4 h-4 flex items-center justify-center"></i>
-                                    <span>Date Range</span>
+                                    <span id="selectedDateRange">
+                                        {{ !empty($filters['date_range']) && isset($filters['date_range']['from'], $filters['date_range']['to'])
+                                            ? $filters['date_range']['from'].' - '.$filters['date_range']['to']
+                                            : 'Date Range' }}
+                                    </span>
                                 </button>
+
+                                <!-- Dropdown -->
+                                <div id="dateDropdown" class="absolute top-full left-0 mt-1 w-64 bg-white rounded shadow-lg border z-10 p-4 hidden">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                                            <input type="date" value="{{ isset($filters['date_range']['from']) ? date('Y-m-d', strtotime($filters['date_range']['from'])) : '' }}" class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary" id="startDate">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                                            <input type="date" value="{{ isset($filters['date_range']['to']) ? date('Y-m-d', strtotime($filters['date_range']['to'])) : '' }}" class="w-full px-4 py-2 text-sm border rounded focus:outline-none focus:border-primary" id="endDate">
+                                        </div>
+                                        <div class="flex justify-end gap-2">
+                                            {{-- <button class="px-3 py-1 text-sm border rounded hover:bg-gray-50" onclick="toggleDropdown(false)">Cancel</button> --}}
+                                            <button class="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary/90" onclick="applyDateFilter()">Apply</button>
+                                            <button class="px-3 py-1 text-sm border rounded hover:bg-gray-50" onclick="applyDateFilter('clear_filed')" >clear</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            {{--  --}}
                             <div class="relative">
                                 <button id="statusFilter" class="w-full px-4 py-2 text-sm border rounded !rounded-button flex items-center gap-2 hover:bg-gray-50">
                                     <i class="ri-filter-3-line w-4 h-4 flex items-center justify-center"></i>
@@ -145,6 +172,11 @@
 </main>
 
 <script>
+    const dateDropdown = document.getElementById("dateDropdown");
+    const dateFilterBtn = document.getElementById("dateFilter");
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+
     function deleteOrder(orderId) {
         const confirmModal = document.createElement('div');
         confirmModal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
@@ -177,4 +209,54 @@
             button.closest('.fixed').remove();
         });
     }
+
+    // Toggle dropdown visibility
+    function toggleDropdown(show = true) {
+        dateDropdown.classList.toggle("hidden", !show);
+    }
+
+    // Apply date filter
+    function applyDateFilter(action = "") {
+        if (action === "clear_filed") {
+            startDateInput.value = "";
+            endDateInput.value = "";
+            dateFilterBtn.querySelector("span").textContent = "Date Range";
+
+            // Dispatch clear event to Livewire
+            Livewire.dispatch("set-date-filter", {
+                key: "date_range",
+                value: { start: "", end: "" },
+            });
+
+            // Close dropdown after clearing
+            toggleDropdown(false);
+            return;
+        }
+
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        if (startDate && endDate) {
+            // Dispatch event to Livewire
+            Livewire.dispatch("set-date-filter", {
+                key: "date_range",
+                value: { start: startDate, end: endDate },
+            });
+
+            // Update button text
+            dateFilterBtn.querySelector("span").textContent = `${startDate} - ${endDate}`;
+
+            // Filter orders if data exists
+            if (Array.isArray(orders)) {
+                filteredOrders = orders.filter(order => order.date >= startDate && order.date <= endDate);
+                renderOrders();
+            }
+        }
+
+        // Close dropdown
+        toggleDropdown(false);
+    }
+    // Event Listeners
+    dateFilterBtn.addEventListener("click", () => toggleDropdown());
+
 </script>
